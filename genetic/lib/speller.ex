@@ -2,7 +2,8 @@ defmodule Speller do
   @behaviour Problem
 
   alias Types.Chromasome
-  @size 34
+  @word "supercalifragilisticexpialidocious"
+  @size String.length(@word)
 
   @impl true
   def genotype do
@@ -15,9 +16,8 @@ defmodule Speller do
 
   @impl true
   def fitness_function(chromasome) do
-    target = "supercalifragilisticexpialidocious"
     guess = List.to_string(chromasome.genes)
-    String.jaro_distance(target, guess)
+    String.jaro_distance(@word, guess)
   end
 
   @impl true
