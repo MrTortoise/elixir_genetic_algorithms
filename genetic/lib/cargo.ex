@@ -5,6 +5,7 @@ defmodule Cargo do
   @size 10
   @profits [6, 5, 8, 9, 6, 7, 3, 1, 2, 6]
   @weights [10, 6, 8, 7, 10, 9, 7, 11, 6, 8]
+  @weight_limit 40
 
   @impl true
   def genotype do
@@ -15,10 +16,24 @@ defmodule Cargo do
   @impl true
   def fitness_function(chromasome) do
     # takes the profits - multiples them by on / off and sums the result
-    @profits
-    |> Enum.zip(chromasome.genes)
-    |> Enum.map(fn {profit, gene} -> profit * gene end)
-    |> Enum.sum()
+    potential_profits =
+      @profits
+      |> Enum.zip(chromasome.genes)
+      |> Enum.map(fn {profit, gene} -> profit * gene end)
+      |> Enum.sum()
+
+    over_limit? =
+      chromasome.genes
+      |> Enum.zip(@weights)
+      |> Enum.map(fn {c, w} -> c * w end)
+      |> Enum.sum()
+      |> Kernel.>(@weight_limit)
+
+    if over_limit? do
+      0
+    else
+      potential_profits
+    end
   end
 
   @impl true
